@@ -7,7 +7,7 @@
   "module": "dist/godirect.min.esm.js",
   "devDependencies": {
     "@babel/core": "^7.4.0",
-    "@babel/plugin-transform-regenerator": "^7.0.0",
+    "@babel/plugin-transform-regenerator": "^7.4.0",
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.2.3",
     "babel-core": "7.0.0-bridge.0",
