@@ -1,0 +1,49 @@
+    
+<!doctype html>
+<html>
+<head>
+  <title>Go Direct Sensor Readout</title>
+  <meta name="description" content="Simple expample of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+</head>
+
+<body>
+  <button id="select_device">Select Go Direct Device</button>
+  <pre id="output"></pre>
+
+  <script>
+    const selectDeviceBtn = document.querySelector('#select_device');
+    const output = document.querySelector('#output');
+    const selectDevice = async () => {
+      try {
+        const gdxDevice = await godirect.selectDevice();
+        output.textContent += `\n Connected to `+gdxDevice.name;
+        output.textContent += `\n Serial Number: `+gdxDevice.serialNumber;
+        output.textContent += `\n Order Code: `+gdxDevice.orderCode;
+        //print name, serial number and order code
+       
+        setTimeout(function(){ gdxDevice._getStatus().then ( (status) => {
+            output.textContent += `\n\n Battery Level: `+status.battery+`%`; 
+            output.textContent += `\n Charging? (1 = yes, 0 = no): `+status.chargingStatus;
+         }); }, 3000);
+        //set up timeout for battery level and battery state and print, possible error in library
+        
+        gdxDevice.enableDefaultSensors();
+        const enabledSensors = gdxDevice.sensors.filter(s => s.enabled = true);
+       //enable ALL sensors not just default
+        
+        enabledSensors.forEach(sensor => {
+           output.textContent += `\n\n Sensor: ${sensor.name} \n units: ${sensor.unit}`;
+        }); 
+        //print each type of sensor and its units
+      
+      } catch (err) {
+        console.error(err);
+      }
+   
+    };
+    selectDeviceBtn.addEventListener('click', selectDevice);
+  </script>
+</body>
+</html>
