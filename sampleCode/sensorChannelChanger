@@ -18,19 +18,22 @@
       try {
         const gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
-        //print name
-        
+
+        gdxDevice.enableDefaultSensors();
+        var enabledSensors = gdxDevice.sensors.filter(s => s.enabled = true);
       
-        
-        const channel = prompt('choose a sensor');
-       
-       const enabledSensors =  gdxDevice._getSensorsWithMask(channel);
-        //changes sensors based on binary numbers
-     
-       enabledSensors.forEach(sensor => {
+        enabledSensors.forEach(sensor => {
+           output.textContent += `\n\n Sensor: ${sensor.name} \n units: ${sensor.unit}`;
+        }); 
+                
+        setTimeout(function(){ 
+          const channel = prompt('choose a sensor');
+          enabledSensors =  gdxDevice._getSensorsWithMask(channel);
+          enabledSensors.forEach(sensor => {
           output.textContent += `\n\n Sensor: ${sensor.name} \n units: ${sensor.unit}`;
-       }); 
+          }); 
         //print each type of sensor and its units
+         }, 3000);
   
       } catch (err) {
         console.error(err);
