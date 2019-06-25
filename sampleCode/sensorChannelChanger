@@ -18,12 +18,17 @@
       try {
         const gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
+        output.textContent += `\n Availiable sensors: (input the number, for multiple sensors add the ) `;
+
 
         gdxDevice.enableDefaultSensors();
         var enabledSensors = gdxDevice.sensors.filter(s => s.enabled = true);
       
+        let sensorID = 2;
+        
         enabledSensors.forEach(sensor => {
-           output.textContent += `\n\n Sensor: ${sensor.name} \n units: ${sensor.unit}`;
+           output.textContent += `\n\n Sensor: ${sensor.name} units: ${sensor.unit} (${sensorID})`  ;
+          sensorID = sensorID * 2
         }); 
                 
         setTimeout(function(){ 
@@ -31,10 +36,11 @@
           enabledSensors =  gdxDevice._getSensorsWithMask(channel);
           enabledSensors.forEach(sensor => {
           output.textContent += `\n\n Sensor: ${sensor.name} \n units: ${sensor.unit}`;
+          
           }); 
         //print each type of sensor and its units
          }, 3000);
-  
+      
       } catch (err) {
         console.error(err);
       }
