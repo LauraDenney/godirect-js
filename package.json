@@ -56,5 +56,8 @@
     "setupFiles": [
       "<rootDir>/jest.init.js"
     ]
+  },
+  "dependencies": {
+    "chart.js": "^2.8.0"
   }
 }
