@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Line Chart</title>
+	<title>Go Direct Sensor Readout</title>
+  <meta name="description" content="Simple expample of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+  <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+  <script src="graphStyle.js" ></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+  <button id="select_device">Select Go Direct Device</button>
+  <pre id="output"></pre>
+
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<br>
+	<br>
+
+	<script>  
+    const selectDeviceBtn = document.querySelector('#select_device');
+    const output = document.querySelector('#output');
+		
+    let sensorReadings = [];
+       const selectDevice = async () => {
+      try {
+        const gdxDevice = await godirect.selectDevice();
+        output.textContent += `\n Connected to `+gdxDevice.name;
+        output.textContent += `\n Reading 10 measurements \n`;
+      
+        gdxDevice.on('device-closed', () => {
+          output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
+        });
+        
+       gdxDevice.enableDefaultSensors();
+        
+        const enabledSensors = gdxDevice.sensors.filter(s => s.enabled);
+        enabledSensors.forEach(sensor => {
+          sensor.on('value-changed', (sensor) => {
+            // Only collect 10 samples and disconnect.
+            if (sensor.values.length > 10){
+              gdxDevice.close();
+            }
+            // log the sensor name, new value and units.
+            console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
+            // output the change to the pre tag
+            sensorReadings.push(sensor.value);
+            console.log(sensorReadings.length);
+            addData(config);
+            output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
+          });
+        });
+      
+      } catch (err) {
+        console.error(err);
+      }
+    };
+       
+  
+      var config = {
+			type: 'line',
+			data: {
+				labels: [1,2,3,4,5,6,7,8,9,10],
+				datasets: [{
+					label: 'Newtons',
+					backgroundColor: window.chartColors.red,
+					borderColor: window.chartColors.red,
+					data: [
+            
+					],
+					fill: false,
+				}]
+			},
+			options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'Chart.js Line Chart'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Time'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						}
+					}]
+				}
+			}
+		}; 		
+    
+    window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+		}; //important
+
+		
+		var colorNames = Object.keys(window.chartColors);
+	
+	    
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data.pop();
+			});
+
+      selectDeviceBtn.addEventListener('click', selectDevice);
+		
+  function addData(chart) {
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(sensorReadings.pop());
+    });
+   window.myLine.update();
+  }
+	</script>
+</body>
+
+</html>
+
