@@ -8,7 +8,7 @@
   <meta charset="utf-8">
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
-	 <script src="graphStyle.js" ></script>
+	 <script src="/script.js" ></script>
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -20,7 +20,6 @@
 
 <body>
   <button id="select_device">Select Go Direct Device</button>
-  <button id="graph">Graph!</button>
   <pre id="output"></pre>
 
 	<div style="width:75%;">
@@ -57,6 +56,8 @@
             console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
             // output the change to the pre tag
             sensorReadings.push(sensor.value);
+            console.log(sensorReadings.length);
+            addData(config);
             output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
           });
         });
@@ -76,18 +77,6 @@
 					backgroundColor: window.chartColors.red,
 					borderColor: window.chartColors.red,
 					data: [
-					  
-            sensorReadings[0],
-            sensorReadings[1],
-            sensorReadings[2],
-            sensorReadings[3],
-            sensorReadings[4],
-            sensorReadings[5],
-            sensorReadings[6],
-            sensorReadings[7],
-            sensorReadings[8],
-            sensorReadings[9],
-            sensorReadings[10]  
             
 					],
 					fill: false,
@@ -134,13 +123,6 @@
 		
 		var colorNames = Object.keys(window.chartColors);
 	
-    document.getElementById('graph').addEventListener('click', function() {
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {	return randomScalingFactor();});
-			});
-
-			window.myLine.update();
-		});
 	    
 			config.data.datasets.forEach(function(dataset) {
 				dataset.data.pop();
@@ -148,7 +130,14 @@
 
       selectDeviceBtn.addEventListener('click', selectDevice);
 		
+  function addData(chart) {
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(sensorReadings.pop());
+    });
+   window.myLine.update();
+  }
 	</script>
 </body>
 
 </html>
+
