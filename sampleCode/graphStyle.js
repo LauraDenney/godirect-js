@@ -1,4 +1,4 @@
-/* eslint-disable func-names */
+eslint-disable func-names ;
 
 
 window.chartColors = {
@@ -64,6 +64,7 @@ window.chartColors = {
       const count = cfg.count || 8;
       const decimals = cfg.decimals || 8;
       const continuity = cfg.continuity || 1;
+      // eslint-disable-next-line no-restricted-properties
       const dfactor = Math.pow(10, decimals) || 0;
       const data = [];
       let i; let
