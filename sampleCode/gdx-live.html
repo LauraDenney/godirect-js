@@ -1,0 +1,67 @@
+    
+<!doctype html>
+<html>
+<head>
+  <title>Go Direct Sensor Readout</title>
+  <meta name="description" content="Simple expample of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+  <style>
+  body {
+    background-color: #A1E49E;
+  }
+   .button {
+  background-color: white;
+  border: none;
+  color: green;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  }
+  div.fixed {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  border: 3px solid #73AD21;
+}
+</style>
+</head>
+
+<body>
+  <button class = "button" id="select_device">Select Go Direct Device</button>
+  <pre id="output"></pre>
+   <div class = "button" id = "reading"> </div>
+  <script>
+    const selectDeviceBtn = document.querySelector('#select_device');
+    const output = document.querySelector('#output');
+    const selectDevice = async () => {
+      try {
+        const gdxDevice = await godirect.selectDevice();
+       
+        output.textContent += `\n Connected to `+gdxDevice.name;
+       
+        
+         gdxDevice.on('device-closed', () => {
+          output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
+        });
+        gdxDevice.enableDefaultSensors();
+        const enabledSensors = gdxDevice.sensors.filter(s => s.enabled );
+        enabledSensors.forEach(sensor => {
+          sensor.on('value-changed', (sensor) => {
+            
+            reading.textContent = `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    selectDeviceBtn.addEventListener('click', selectDevice);
+  </script>
+</body>
+</html>

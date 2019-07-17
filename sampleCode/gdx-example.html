@@ -1,0 +1,57 @@
+    
+<!doctype html>
+<html>
+<head>
+  <title>Go Direct Sensor Readout</title>
+  <meta name="description" content="Simple example of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+  //set up program here, import necesary libraries to help condense code and add to its functionality 
+</head>
+
+<body>
+  <button id="select_device">Select Go Direct Device</button>
+  <pre id="output"></pre>
+  //initialize html components
+  <script>
+    //start javascript file 
+    const selectDeviceBtn = document.querySelector('#select_device');
+    const output = document.querySelector('#output');
+   
+    const selectDevice = async () => {     //asynchronous function to open device communication
+      try {
+        const gdxDevice = await godirect.selectDevice();     //wait for device to e selected
+       
+        output.textContent += `\n Connected to `+gdxDevice.name;
+        output.textContent += `\n Reading 10 measurements `;
+        //display sensor name
+        
+         gdxDevice.on('device-closed', () => {
+          output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
+          });
+          //when the device is closed, display that it is disconnected 
+        
+        gdxDevice.enableDefaultSensors();      //enable the default sensor channel for the device
+     
+        const enabledSensors = gdxDevice.sensors.filter(s => s.enabled );     //
+        enabledSensors.forEach(sensor => {
+          sensor.on('value-changed', (sensor) => {
+            // Only collect 10 samples and disconnect.
+                 
+            if (sensor.values.length > 10){
+              gdxDevice.close();
+            }
+            // log the sensor name, new value and units.
+            console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
+            // output the change to the pre tag
+            output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    selectDeviceBtn.addEventListener('click', selectDevice);
+  </script>
+</body>
+</html>
