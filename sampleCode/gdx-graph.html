@@ -1,10 +1,11 @@
+
 <!doctype html>
 <html>
 
 <head>
 	<title>Line Chart</title>
 	<title>Go Direct Sensor Readout</title>
-  <meta name="description" content="Simple example of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta name="description" content="Simple expample of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
   <meta charset="utf-8">
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
@@ -33,9 +34,10 @@
     const output = document.querySelector('#output');
 		
     let sensorReadings = [];
+    const sensorUnit = "";
        const selectDevice = async () => {
       try {
-        const gdxDevice = await godirect.selectDevice();
+        gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
         output.textContent += `\n Reading 10 measurements \n`;
       
@@ -57,7 +59,8 @@
             // output the change to the pre tag
             sensorReadings.push(sensor.value);
             console.log(sensorReadings.length);
-            addData(config);
+            addData(config, sensor.unit);
+            unit = sensor.unit;
             output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
           });
         });
@@ -68,12 +71,12 @@
     };
        
   
-      var config = {
+      let config = {
 			type: 'line',
 			data: {
 				labels: [1,2,3,4,5,6,7,8,9,10],
 				datasets: [{
-					label: 'Newtons',
+					label: '',
 					backgroundColor: window.chartColors.red,
 					borderColor: window.chartColors.red,
 					data: [
@@ -116,12 +119,12 @@
 		}; 		
     
     window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
+			let ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new Chart(ctx, config);
 		}; //important
 
 		
-		var colorNames = Object.keys(window.chartColors);
+		let colorNames = Object.keys(window.chartColors);
 	
 	    
 			config.data.datasets.forEach(function(dataset) {
@@ -130,7 +133,8 @@
 
       selectDeviceBtn.addEventListener('click', selectDevice);
 		
-  function addData(chart) {
+  function addData(chart, unit) {
+    chart.data.label = unit;
     chart.data.datasets.forEach((dataset) => {
         dataset.data.push(sensorReadings.pop());
     });
@@ -140,4 +144,3 @@
 </body>
 
 </html>
-
