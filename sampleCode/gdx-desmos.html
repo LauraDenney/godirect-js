@@ -38,31 +38,37 @@
 </head>
 
 <body>
+  
+  <!--format webpage-->
  <div align="left"> <button  class="button" id="select_device">Select Go Direct Device</button>
   <pre  id="output"></pre> 
-  <!--format webpage-->
+ 
 </div>
 
-<div  class = "fixed" id="calculator" style="width: 1000px; height: 600px;"></div> 
 <!--create calculator-->
+<div  class = "fixed" id="calculator" style="width: 1000px; height: 600px;"></div> 
+
 
   <script >
     let elt = document.getElementById('calculator');
     let calc = Desmos.GraphingCalculator(elt);
 
+    // x &y arrays to store values to graph
     let xvalues = [''];
     let yvalues = [''];
-    //x &y arrays to store values to graph
-
-    function updateTable () { //update table function to add values to the graph
+    
+    // update table function to add values to the graph
+    function updateTable () { 
       calc.setExpressions([
        { id: 'table1',
          type: 'table',
          columns: [
           {latex: 'x_1', values: xvalues},
-          {latex: 'y_1', values: yvalues} ] },
+          {latex: 'y_1', values: yvalues} ] }, 
+          
+          // linear regression equation to find line of best fit, can be changed depending on data
           { id: 'regression', latex: 'y_1~mx_1+b'} 
-          //linear regression equation to find line of best fit, can be changed depending on data
+         
       ]);                                      
     }
     
@@ -98,13 +104,13 @@
             let y = sensor.value;
             let x = count++;
 
-           // var mathCoordinates = calculator.pixelsToMath({x: x, y: y});
+           // add the x & y values to the x & y arrays
             xvalues.push(x.toPrecision(4));
             yvalues.push(y.toPrecision(4));
-            //add the x & y values to the x & y arrays
-  
+           
+            // update the graph with the current values
             updateTable();
-            //update the graph with the current values
+            
                 
           });
         });
@@ -112,8 +118,10 @@
         console.error(err);
       }
     };
+    
+    // start the selectDevice function after the button is clicked
     selectDeviceBtn.addEventListener('click', selectDevice);
-    //start the selectDevice function after the button is clicked
+    
   </script>
 </body>
 </html>

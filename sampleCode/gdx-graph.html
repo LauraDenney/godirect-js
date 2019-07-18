@@ -2,15 +2,17 @@
 <!doctype html>
 <html>
 
-<head>
-	<title>Line Chart</title>
-	<title>Go Direct Sensor Readout</title>
+<head> 
+  <title>Line Chart</title>
+  <title>Go Direct Sensor Readout</title>
   <meta name="description" content="Simple example of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
-  <meta charset="utf-8">
+  <meta charset="utf-8"> 
+  
+  <!--import chart.js and GoDirect library-->
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
   <script src="graphStyle.js" ></script>
-  <!--import chart.js and GoDirect library-->
+
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -23,10 +25,11 @@
 <body>
   <button id="select_device">Select Go Direct Device</button>
   <pre id="output"></pre>
-
+	
+ 	 <!--set up canvas for chart to be created-->
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
-		<!--set up canvas for chart to be created-->
+		
 	</div>
 	<br>
 	<br>
@@ -34,12 +37,13 @@
 	<script>  
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output');
-		
-    let sensorReadings = [];   //create global array for sensor readings to be stored
+	// create global array for sensor readings to be stored
+    let sensorReadings = [];   
 	
-      
-	   const selectDevice = async () => {  			//select device function, awaits connection to the device 
-      try {
+    // select device function, awaits connection to the device 
+	const selectDevice = async () => {  			
+     
+	  try {
         gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
         output.textContent += `\n Reading 10 measurements \n`;
@@ -47,8 +51,9 @@
         gdxDevice.on('device-closed', () => {
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
         });
-        
-       gdxDevice.enableDefaultSensors(); 		//enable the default sensor to use for measurements
+
+        // enable the default sensor to use for measurements
+       gdxDevice.enableDefaultSensors(); 		
         
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled);
         enabledSensors.forEach(sensor => {
@@ -60,13 +65,16 @@
             // log the sensor name, new value and units.
             console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
             // output the change to the pre tag
-            sensorReadings.push(sensor.value);
-			//add the sensor value to the sensorReading array  
+           
+		    // add the sensor value to the sensorReading array  
+			sensorReadings.push(sensor.value);
 			let unit = sensor.unit; 
+			
+			// use the addData function to add the sensor data to the chart
             addData(config, sensor.unit);
-			//use the addData function to add the sensor data to the chart
+			// print the sensor name, value and units
             output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
-			//print the sensor name, value and units
+			
           });
         });
       
@@ -75,16 +83,20 @@
       }
     };
        
-  
-      let config = { 			//chart setup
-			type: 'line', 		//type of chart, could be 'line' or 'bar'
+ 	  // chart setup
+      let config = {
+
+		  // type of chart, could be 'line' or 'bar' 			
+			type: 'line', 		
 			data: {
-				labels: [1,2,3,4,5,6,7,8,9,10],   //x axis labels
+				// x axis labels
+				labels: [1,2,3,4,5,6,7,8,9,10],   
 				datasets: [{
 					label: '',
 					backgroundColor: window.chartColors.red,
 					borderColor: window.chartColors.red,
-					data: [], 				//initial data, sensor data to be added with addData function
+					// initial data, sensor data to be added with addData function
+					data: [], 				
 					fill: false,
 				}]
 			},
@@ -131,17 +143,26 @@
 	
 	    
 			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();   //send the data to the dataset to be added to the line
+				// send the data to the dataset to be added to the line
+				dataset.data.pop();   
 			});
+      
+	  // start the selectDevice function when the button is pressed
+      selectDeviceBtn.addEventListener('click', selectDevice); 		
+  
+  // addData function to add data to the chart
+  function addData(chart, unit) { 
 
-      selectDeviceBtn.addEventListener('click', selectDevice); 		//start the selectDevice function when the button is pressed
-		
-  function addData(chart, unit) { 		//addData function to add data to the chart
-    chart.data.label = unit; 			//label the chart with the units from the sensor
-    chart.data.datasets.forEach((dataset) => { 		//for each data point in the data set, add the sensorReading value
+	// label the chart with the units from the sensor
+    chart.data.label = unit; 			
+
+	// for each data point in the data set, add the sensorReading value
+    chart.data.datasets.forEach((dataset) => { 		
         dataset.data.push(sensorReadings.pop());
     });
-   window.myLine.update(); 		//update the chart line
+	 
+   // update the chart line
+   window.myLine.update(); 		
   }
 	</script>
 </body>

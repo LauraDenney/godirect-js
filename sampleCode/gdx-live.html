@@ -6,6 +6,7 @@
   <meta name="description" content="Simple example of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
   <meta charset="utf-8">
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+  
   <!--add style elements (optional)-->
   <style> 
   body {            
@@ -36,7 +37,9 @@
 <body>
   <button class = "button" id="select_device">Select Go Direct Device</button>
   <pre id="output"></pre>
-   <div class = "button" id = "reading"> </div> <!--add text object for live reading display-->
+
+  <!--add text object for live reading display-->
+   <div class = "button" id = "reading"> </div> 
   <script>
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output');
@@ -45,8 +48,9 @@
       try {
         const gdxDevice = await godirect.selectDevice();
        
+        // output the name of the device
         output.textContent += `\n Connected to `+gdxDevice.name;
-        //output the name of the device
+        
 
          gdxDevice.on('device-closed', () => {
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
@@ -56,7 +60,8 @@
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled );
         enabledSensors.forEach(sensor => {
           sensor.on('value-changed', (sensor) => {
-            //change the live reading text object according to the sensor value 
+            
+            // change the live reading text object according to the sensor value 
             reading.textContent = `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
           });
         });
