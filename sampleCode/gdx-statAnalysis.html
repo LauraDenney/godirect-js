@@ -19,15 +19,20 @@
         const gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
         output.textContent += `\n Reading 10 measurements \n`;
+       
         gdxDevice.on('device-closed', () => {
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
+          //once the device is finished collection, disconnect and display the max, min and average value
           output.textContent += `\n max: ` +max;
           output.textContent += `\n min: ` + min;
           output.textContent += `\n average: ` +av/10;
+          //calculate the average value with the sample size and print
         });
+       
         let max = 0;
-        let min = 600;
+        let min = 600; //change min to sensor threshold or above estimated maximum
         let av = 0;
+        //init variable functions to compare to sensor values
         
         gdxDevice.enableDefaultSensors();
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled);
@@ -43,12 +48,15 @@
             output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
         
             if (sensor.value > max){
-              max = sensor.value
+              max = sensor.value      
+              //if the current sensor value is greater than the previous maximum value, reassign max to the current sensor value
             }
             if (sensor.value < min){
               min = sensor.value
+               //if the current sensor value is less than the previous minimum value, reassign min to the current sensor value
             }
             av += sensor.value;
+            //add the current sensor value to the average total
           });
         });
       } catch (err) {
@@ -56,6 +64,7 @@
       }
     };
     selectDeviceBtn.addEventListener('click', selectDevice);
+    //start the selectDevice function after the button is clicked
   </script>
 </body>
 </html>

@@ -8,6 +8,8 @@
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://www.desmos.com/api/v1.3/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+  <!--add the Desmos and GoDirect Libraries-->
+  <!--add style elements (optional)-->
 <style>
   body {
     background-color: #A1E49E;
@@ -38,9 +40,11 @@
 <body>
  <div align="left"> <button  class="button" id="select_device">Select Go Direct Device</button>
   <pre  id="output"></pre> 
+  <!--format webpage-->
 </div>
 
 <div  class = "fixed" id="calculator" style="width: 1000px; height: 600px;"></div> 
+<!--create calculator-->
 
   <script >
     let elt = document.getElementById('calculator');
@@ -48,15 +52,17 @@
 
     let xvalues = [''];
     let yvalues = [''];
+    //x &y arrays to store values to graph
 
-    function updateTable () {
+    function updateTable () { //update table function to add values to the graph
       calc.setExpressions([
        { id: 'table1',
          type: 'table',
          columns: [
           {latex: 'x_1', values: xvalues},
           {latex: 'y_1', values: yvalues} ] },
-          { id: 'regression', latex: 'y_1~mx_1+b'}
+          { id: 'regression', latex: 'y_1~mx_1+b'} 
+          //linear regression equation to find line of best fit, can be changed depending on data
       ]);                                      
     }
     
@@ -91,11 +97,14 @@
           
             let y = sensor.value;
             let x = count++;
+
            // var mathCoordinates = calculator.pixelsToMath({x: x, y: y});
             xvalues.push(x.toPrecision(4));
             yvalues.push(y.toPrecision(4));
+            //add the x & y values to the x & y arrays
   
             updateTable();
+            //update the graph with the current values
                 
           });
         });
@@ -104,6 +113,7 @@
       }
     };
     selectDeviceBtn.addEventListener('click', selectDevice);
+    //start the selectDevice function after the button is clicked
   </script>
 </body>
 </html>

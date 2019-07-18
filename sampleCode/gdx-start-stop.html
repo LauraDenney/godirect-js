@@ -8,6 +8,8 @@
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://www.desmos.com/api/v1.3/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+  <!--include the Desmos and the GoDirect libraries-->
+  <!--style the webpage with css (optional)-->
 <style>
   body {
     background-color: #A1E49E;
@@ -37,22 +39,30 @@
 
 <body>
  <div align="left">
-   <button  class="button" id="select_device">Select Go Direct Device</button>
+   <button  class="button" id="select_device" onclick="selectDevice()">Select Go Direct Device</button>
+   <!--run the selectDevice function when the 'Select Go Direct Device' button is pressed-->
+  
    <button  class="button" id="start_collection" onclick="startCollection()" >Start Collection</button>
-   <button  class="button" id="stop_collection" onclick="stopCollection()" >Stop Collection</button>
+    <!--run the startCollection function when the 'start collection' button is pressed-->
+  
+    <button  class="button" id="stop_collection" onclick="stopCollection()" >Stop Collection</button>
+     <!--run the stopCollection function when the 'stop collection' button is pressed-->
   <pre  id="output"></pre> 
+  <!--format the webpage -->
 </div>
 
 <div  class = "fixed" id="calculator" style="width: 950px; height: 600px;"></div> 
+<!--create the calculator on the webpage-->
 
-  <script >
+  <script >     //setup the calculator 
     let elt = document.getElementById('calculator');
     let calc = Desmos.GraphingCalculator(elt);
 
     let xvalues = [''];
     let yvalues = [''];
+    //store the x & y values to be graphed 
 
-    function updateTable () {
+    function updateTable () {     
       calc.setExpressions([
        { id: 'table1',
          type: 'table',
@@ -71,18 +81,19 @@
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output'); 
     let count = 0;
-    let gdxDevice = "";
+    let gdxDevice = "";  //create globale object gdxDevice to be used in other 
     
     const selectDevice = async () => {
       try {
-        gdxDevice = await godirect.selectDevice();
+        gdxDevice = await godirect.selectDevice(); 
+        //connect to the device
         output.textContent += `\n Connected to `+gdxDevice.name;
         output.textContent += `\n Press start to start collection \n`;
       } catch (err) {
         console.error(err);
       }
     };
-     const startCollection = async () => {
+     const startCollection = async () => {  //start collection function 
        
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled);
             enabledSensors.forEach(sensor => {
@@ -92,30 +103,33 @@
             console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
             // output the change to the pre tag
           output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
-          count += 0.5;
-          let y = sensor.value;
+          count += 0.5;     
+          //add a sensor value every 0.5 on the x, change according to sampleRate, 0.5 = 500 ms period
+          let y = sensor.value;   
           let x = count;
            // var mathCoordinates = calculator.pixelsToMath({x: x, y: y});
             xvalues.push(x.toPrecision(4));
             yvalues.push(y.toPrecision(4));
+            //add the x & y values to their respective arrays, round the number 4 places
   
-            updateTable();
+            updateTable(); 
+            //update the table with the new sensor values
                 
           });
         });
        
      } 
-     const stopCollection = async () => {
+     const stopCollection = async () => { // stop collection function
          gdxDevice.close();
+         //disconnect from the device
         
          gdxDevice.on('device-closed', () => {
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
         });
+        //print that the device is disconnected
          
        }
     
-    selectDeviceBtn.addEventListener('click', selectDevice);
-     
   </script>
 </body>
 </html>

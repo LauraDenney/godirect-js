@@ -10,6 +10,7 @@
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
   <script src="graphStyle.js" ></script>
+  <!--import chart.js and GoDirect library-->
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -25,6 +26,7 @@
 
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
+		<!--set up canvas for chart to be created-->
 	</div>
 	<br>
 	<br>
@@ -33,9 +35,10 @@
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output');
 		
-    let sensorReadings = [];
-    const sensorUnit = "";
-       const selectDevice = async () => {
+    let sensorReadings = [];   //create global array for sensor readings to be stored
+	
+      
+	   const selectDevice = async () => {  			//select device function, awaits connection to the device 
       try {
         gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
@@ -45,7 +48,7 @@
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
         });
         
-       gdxDevice.enableDefaultSensors();
+       gdxDevice.enableDefaultSensors(); 		//enable the default sensor to use for measurements
         
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled);
         enabledSensors.forEach(sensor => {
@@ -58,10 +61,12 @@
             console.log(`Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`);
             // output the change to the pre tag
             sensorReadings.push(sensor.value);
-            console.log(sensorReadings.length);
+			//add the sensor value to the sensorReading array  
+			let unit = sensor.unit; 
             addData(config, sensor.unit);
-            unit = sensor.unit;
+			//use the addData function to add the sensor data to the chart
             output.textContent += `\n Sensor: ${sensor.name} value: ${sensor.value} units: ${sensor.unit}`;
+			//print the sensor name, value and units
           });
         });
       
@@ -71,17 +76,15 @@
     };
        
   
-      let config = {
-			type: 'line',
+      let config = { 			//chart setup
+			type: 'line', 		//type of chart, could be 'line' or 'bar'
 			data: {
-				labels: [1,2,3,4,5,6,7,8,9,10],
+				labels: [1,2,3,4,5,6,7,8,9,10],   //x axis labels
 				datasets: [{
 					label: '',
 					backgroundColor: window.chartColors.red,
 					borderColor: window.chartColors.red,
-					data: [
-            
-					],
+					data: [], 				//initial data, sensor data to be added with addData function
 					fill: false,
 				}]
 			},
@@ -121,24 +124,24 @@
     window.onload = function() {
 			let ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new Chart(ctx, config);
-		}; //important
+		}; 
 
 		
 		let colorNames = Object.keys(window.chartColors);
 	
 	    
 			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();
+				dataset.data.pop();   //send the data to the dataset to be added to the line
 			});
 
-      selectDeviceBtn.addEventListener('click', selectDevice);
+      selectDeviceBtn.addEventListener('click', selectDevice); 		//start the selectDevice function when the button is pressed
 		
-  function addData(chart, unit) {
-    chart.data.label = unit;
-    chart.data.datasets.forEach((dataset) => {
+  function addData(chart, unit) { 		//addData function to add data to the chart
+    chart.data.label = unit; 			//label the chart with the units from the sensor
+    chart.data.datasets.forEach((dataset) => { 		//for each data point in the data set, add the sensorReading value
         dataset.data.push(sensorReadings.pop());
     });
-   window.myLine.update();
+   window.myLine.update(); 		//update the chart line
   }
 	</script>
 </body>

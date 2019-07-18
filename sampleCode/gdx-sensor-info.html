@@ -22,16 +22,17 @@
         output.textContent += `\n Serial Number: `+gdxDevice.serialNumber;
         output.textContent += `\n Order Code: `+gdxDevice.orderCode;
         output.textContent += `\n measurementPeriod: `+gdxDevice.measurementPeriod ;
-        //print name, serial number and order code
+        //print name, serial number, order code and measurement period
        
         gdxDevice.start(measurementPeriod = 1000);
         output.textContent += `\n measurementPeriod: `+gdxDevice.measurementPeriod ;
-        
+        //reassign the measurement period and display the new period
+
         setTimeout(function(){ gdxDevice._getStatus().then ( (status) => {
             output.textContent += `\n\n Battery Level: `+status.battery +`%`; 
             output.textContent += `\n Charging? (1 = yes, 0 = no): `+status.chargingStatus;
          }); }, 3000);
-        //set up timeout for battery level and battery state and print, possible error in library
+        //set up timeout for battery level and battery state and print
         
         gdxDevice.enableDefaultSensors();
         const enabledSensors = gdxDevice.sensors.filter(s => s.enabled = true);
