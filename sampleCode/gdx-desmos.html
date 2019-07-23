@@ -54,8 +54,8 @@
     let calc = Desmos.GraphingCalculator(elt);
 
     // x &y arrays to store values to graph
-    let xvalues = [''];
-    let yvalues = [''];
+    let xvalues = [];
+    let yvalues = [];
     
     // update table function to add values to the graph
     function updateTable () { 
@@ -85,6 +85,7 @@
         const gdxDevice = await godirect.selectDevice();
         output.textContent += `\n Connected to `+gdxDevice.name;
         output.textContent += `\n Reading 10 measurements \n`;
+        output.textContent += `\n If you can't see your sensor values on the graph right away, \n Zoom out of the graph in the Desmos Window \n`;
         gdxDevice.on('device-closed', () => {
           output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
         });
