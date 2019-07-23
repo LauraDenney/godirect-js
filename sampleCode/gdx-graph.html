@@ -11,8 +11,6 @@
   <!--import chart.js and GoDirect library-->
   <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
-  <script src="graphStyle.js" ></script>
-
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -25,7 +23,7 @@
 <body>
   <button id="select_device">Select Go Direct Device</button>
   <pre id="output"></pre>
-	
+
  	 <!--set up canvas for chart to be created-->
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
@@ -42,7 +40,7 @@
 	}; 
 	
    
-    const selectDeviceBtn = document.querySelector('#select_device');
+	const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output');
 	// create global array for sensor readings to be stored
     let sensorReadings = [];   
