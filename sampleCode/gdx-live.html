@@ -41,6 +41,19 @@
   <!--add text object for live reading display-->
    <div class = "button" id = "reading"> </div> 
   <script>
+  /* 
+  * This example uses the GDX JavaScript library to collect and manipulate data from a Vernier GoDirect Sensor. 
+  * Press the 'Connect to Device' button to open communication to the device in a Chrome browser.
+  * This program displays a live reading from the sensor. It also contains simple css style elements to make the webpage more appealing. 
+  *
+  * This program uses the following functions from the GDX Library:
+  * 
+  * gdxDevice.selectDevice();
+  * gdxDevice.close();
+  * gdxDevice.enableDefaultSensors();
+  * gdxDevice.sensors.filter();
+  *
+  */
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output');
     

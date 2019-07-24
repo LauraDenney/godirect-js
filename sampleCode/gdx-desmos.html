@@ -77,6 +77,22 @@
   </script>
   
   <script>
+
+  /* 
+  * This example uses the GDX JavaScript library to collect and manipulate data from a Vernier GoDirect Sensor. 
+  * It also contains the Desmos API for easy graphing and calculations. Press the 'Connect to Device' button to open communication
+  * to the device in a Chrome browser. Use the Desmos window to view the data collected
+  * and to preform simple calculations. This program collects 10 data points and disconnects from the device. 
+  * It has simple css style elements to make the webpage more appealing.
+  *
+  * This program uses the following functions from the GDX Library:
+  * 
+  * gdxDevice.selectDevice();
+  * gdxDevice.close();
+  * gdxDevice.enableDefaultSensors();
+  * gdxDevice.sensors.filter();
+  * 
+  */
     const selectDeviceBtn = document.querySelector('#select_device');
     const output = document.querySelector('#output'); 
     var count = 0;
