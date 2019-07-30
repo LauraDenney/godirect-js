@@ -1,0 +1,81 @@
+    
+<!doctype html>
+<html>
+<head>
+  <title>Go Direct Sensor Readout</title>
+  <meta name="description" content="Simple expample of connecting to a Vernier Go Direct® Sensor with WebBluetooth and logging out the default sensor value">
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/@vernier/godirect/dist/godirect.min.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+
+</head>
+
+<body>
+  <button id="select_device">Select Go Direct Device</button>
+  <pre id="output"></pre>
+
+  <script>
+    /* 
+  * This example uses the GDX JavaScript library to collect and manipulate data from a Vernier GoDirect Sensor. 
+  * It also contains the p5.js API to incorporate a canvas to create visual. Press the 'Connect to Device' button to open communication
+  * to the device in a Chrome browser. Connect to a digital photogate and cover Gate 1. While Gate 1 is covered, a secret message will appear. 
+  *
+  * This program uses the following functions from the GDX Library:
+  * 
+  * gdxDevice.selectDevice();
+  * gdxDevice.close();
+  * gdxDevice.enableDefaultSensors();
+  * gdxDevice.sensors.filter();
+  * 
+  */
+    const selectDeviceBtn = document.querySelector('#select_device');
+    const output = document.querySelector('#output');
+   
+    // create canvas for p5.js to use
+    function setup() {
+      createCanvas(400, 400);
+    }    
+
+    const selectDevice = async () => {
+      try {
+
+        // connect to device as normal
+        const gdxDevice = await godirect.selectDevice();
+       
+        output.textContent += `\n Connected to `+gdxDevice.name;
+        output.textContent += `\n A black box will appear if Gate One is blocked on the GoDirect Photogate `;
+    
+        gdxDevice.on('device-closed', () => {
+          output.textContent += `\n\n Disconnected from `+gdxDevice.name+`\n`;
+        });
+     
+        //enable sensor channel 4, the Gate 1 channel
+        const sensor =  gdxDevice.getSensor(4);
+        sensor.setEnabled(true);
+
+        // when the sensor value changes, execute the if statement
+         sensor.on('value-changed', (sensor) => {
+          
+           // if the sensor is blocked (1), show message
+           if (sensor.value == 1){
+             background(0);
+            textSize(32);
+            fill(255);
+            text('sensor blocked!', 10, 30);
+           } 
+           //if sensor value is not 1 show nothing 
+           else{
+             background(255);
+           }
+           
+          }); 
+ 
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    // start the selectDevice function after the button is clicked
+    selectDeviceBtn.addEventListener('click', selectDevice);
+  </script>
+</body>
+</html>
